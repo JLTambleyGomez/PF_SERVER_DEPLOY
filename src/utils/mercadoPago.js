@@ -53,16 +53,18 @@ try {
   const { email, merchant_order_id, payment_id, status } = req.query;
   const { compra } = req.body; 
   
-  console.log("aquiva"+req.body)
+  compra.forEach((item) => {
+    item.price = Number(item.price);
+    item.quantity = Number(item.quantity); 
+  });
+
   const totalAmount = compra.reduce((total, product) => total + +product.price * +product.quantity, 0);
-  console.log({totalAmount})
-  console.log(compra)
+ 
 
 
   const date = new Date()
   const formatedDate = date.toISOString().split('T')[0];
 
-  console.log(req.query.status)
   
   const newPayment = await Payment.create({
     id: payment_id,
@@ -70,7 +72,6 @@ try {
     status: status,
     totalPrice:totalAmount
   })
-  console.log(newPayment)
 
   const user = await User.findOne({
     where: {email: email}
